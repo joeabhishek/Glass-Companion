@@ -1,8 +1,10 @@
+# Myo-Glass-Messaging-Service
+
 This system here uses the MYO companion app and controls the glass completely through gestures. This app is primarily a prototype built to demonstrate messaging templates for gestures.
 
 Messages can be triggered with gestures. Messages are also converted from text to speech using gestures. This functionality might help the mute communicate in an easier way.
 
-# Myo Glass Companion Protocol Input
+## Myo Glass Companion Protocol Input
 
 Uses Glass Companion Bluetooth protocol to connect to Google Glass Explorer Edition and control the native ui/interface using the &copy;Myo Gesture Control Armband (thalmic.com/myo).
 
