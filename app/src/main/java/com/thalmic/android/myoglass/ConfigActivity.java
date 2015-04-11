@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.speech.tts.TextToSpeech;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -47,9 +48,11 @@ import com.thalmic.myo.scanner.ScanActivity;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Locale;
 import java.util.Set;
 
-public class ConfigActivity extends Activity implements GlassDevice.GlassConnectionListener {
+public class ConfigActivity extends Activity implements GlassDevice.GlassConnectionListener,
+        TextToSpeech.OnInitListener {
     private static final String TAG = "ConfigActivity";
 
     private static final int REQUEST_ENABLE_BT = 1;
@@ -69,6 +72,7 @@ public class ConfigActivity extends Activity implements GlassDevice.GlassConnect
 
     private GlassDevice mGlass;
     private boolean mScreencastEnabled = false;
+    private TextToSpeech tts;
 
 
     //Bluetooth Chat
@@ -115,6 +119,8 @@ public class ConfigActivity extends Activity implements GlassDevice.GlassConnect
     public void setCurrentActivity(Activity mCurrentActivity){
         this.mCurrentActivity = mCurrentActivity;
     }
+
+    private boolean speak = false;
 
     //BLUETOOTH Chat End
 
@@ -171,6 +177,9 @@ public class ConfigActivity extends Activity implements GlassDevice.GlassConnect
         bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
         registerReceiver(mStopReceiver, new IntentFilter(MyoRemoteService.ACTION_STOP_MYO_GLASS));
+
+        //Text to speech initialization
+        tts = new TextToSpeech(this, this);
 
         //Bluetooth Chat
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -322,6 +331,9 @@ public class ConfigActivity extends Activity implements GlassDevice.GlassConnect
                         mChatService.stop();
                     }
                     mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+                    if(speak){
+                        speakOut(readMessage);
+                    }
 
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
@@ -342,8 +354,34 @@ public class ConfigActivity extends Activity implements GlassDevice.GlassConnect
         }
     };
 
+    @Override
+    public void onInit(int status) {
 
+        if (status == TextToSpeech.SUCCESS) {
 
+            int result = tts.setLanguage(Locale.US);
+
+            if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "This Language is not supported");
+            } else {
+
+            }
+
+        } else {
+            Log.e("TTS", "Initilization Failed!");
+        }
+
+    }
+
+    private void speakOut(String text) {
+
+        //String text = txtText.getText().toString();
+
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+    }
+
+    //BLuetooth Chat End
 
     @Override
     protected void onDestroy() {
@@ -392,7 +430,16 @@ public class ConfigActivity extends Activity implements GlassDevice.GlassConnect
             case R.id.kill_myglass:
                 killMyGlass();
                 return true;
+            case R.id.speak_text:
+                item.setChecked(!item.isChecked());
+                if(item.isChecked()){
+                    speak = true;
+                } else {
+                    speak = false;
+                }
+                return true;
         }
+
 
         return super.onOptionsItemSelected(item);
     }

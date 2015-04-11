@@ -18,5 +18,6 @@
     <string name="no_devices_title">No paired devices.</string>
     <string name="no_devices_message">Glass must be paired before connecting.</string>
     <string name="kill_myglass">Kill MyGlass</string>
+    <string name="action_speak">Speak Messages</string>
 
 </resources>
