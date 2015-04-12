@@ -53,6 +53,7 @@ dependencies {
     compile('com.thalmic:myosdk:0.10.+@aar')
     compile 'com.polysfactory.lib.glass.bluetooth:glass-bluetooth:0.1.2'
     compile 'com.intellij:annotations:+@jar'
+    compile 'com.google.android.gms:play-services-wearable:7.0.0'
 }
 
 String getTeamCityBuildNumber() {
