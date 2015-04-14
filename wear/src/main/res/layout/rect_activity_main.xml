@@ -3,18 +3,10 @@
     android:id = "@+id/container"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:orientation="vertical" android:gravity="center"
+    android:layout_height="match_parent" android:orientation="vertical"
     tools:context=".MainActivity" tools:deviceIds="wear_square">
 
-    <TextView android:id="@+id/central_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:text="Glass Control"
-        android:textSize="@dimen/abc_text_size_large_material" />
-
-<!--    <TextView android:id="@+id/text1" android:layout_width="wrap_content"
+    <TextView android:id="@+id/text1" android:layout_width="wrap_content"
         android:layout_height="wrap_content" android:text="@string/text1" />
 
     <TextView android:id="@+id/text2" android:layout_width="wrap_content"
@@ -27,6 +19,6 @@
         android:layout_height="wrap_content" android:text="@string/text4" />
 
     <TextView android:id="@+id/text5" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" android:text="@string/text5" />-->
+        android:layout_height="wrap_content" android:text="@string/text5" />
 
 </LinearLayout>

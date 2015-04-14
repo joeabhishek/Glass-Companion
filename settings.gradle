@@ -1,1 +1,1 @@
-include ':app', ':wear-glass-companion'
+include ':app', ':wear'

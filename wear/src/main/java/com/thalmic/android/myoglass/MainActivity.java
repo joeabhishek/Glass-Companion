@@ -1,4 +1,4 @@
-package com.example.mojo.wear_glass_companion;
+package com.thalmic.android.myoglass;
 
 import android.app.Activity;
 import android.content.Context;
@@ -28,10 +28,10 @@ public class MainActivity extends Activity implements SensorEventListener,
 
     private static final long CONNECTION_TIME_OUT_MS = 100;
     private static final String DEBUG_TAG = "Gestures";
-    private static final String MESSAGE1 = "Hello Watch! You're in Control";
-    private static final String MESSAGE2 = "I'm running late, but I'll be there soon.";
-    private static final String MESSAGE3 = "Sorry, I missed your call.";
-    private static final String MESSAGE4 = "Please call me when you get this message.";
+    private static final String MESSAGE1 = "SINGLE";
+    private static final String MESSAGE2 = "DOUBLE";
+    private static final String MESSAGE3 = "RTL";
+    private static final String MESSAGE4 = "LONG";
     private static final String MESSAGE5 = "I'm in the airport now, I'll talk to you later.";
 
 
@@ -84,14 +84,14 @@ public class MainActivity extends Activity implements SensorEventListener,
         mDetector = new GestureDetectorCompat(MainActivity.this, new GestureDetector.SimpleOnGestureListener(){
             @Override
             public void onLongPress (MotionEvent e){
-                sendMessage4();
+                sendMessage(MESSAGE4);
                 // Detected long press
                 Toast.makeText(getBaseContext(),"Long Press",Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public boolean onDoubleTap(MotionEvent e) {
-                sendMessage2();
+                sendMessage(MESSAGE2);
                 Toast.makeText(getBaseContext(),"Double Tap", Toast.LENGTH_SHORT).show();
                 Log.d(DEBUG_TAG, "onDoubleTap: " + e.toString());
                 return true;
@@ -104,15 +104,15 @@ public class MainActivity extends Activity implements SensorEventListener,
                     if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH) {
                         return true;
                     } else if(Math.abs(e2.getY() - e1.getY()) > SWIPE_MAX_OFF_PATH) {
-                        sendMessage5();
-                        Toast.makeText(getBaseContext(), "Fling", Toast.LENGTH_SHORT).show();
+                        sendMessage(MESSAGE5);
+                        Toast.makeText(getBaseContext(), "Message5 Sent", Toast.LENGTH_SHORT).show();
                         return true;
                     }
 
                     // right to left swipe
                     if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                        sendMessage3();
-                        Toast.makeText(getBaseContext(), "Swipe", Toast.LENGTH_SHORT).show();
+                        sendMessage(MESSAGE3);
+                        Toast.makeText(getBaseContext(), "Right Swipe", Toast.LENGTH_SHORT).show();
                     }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
                         //Toast.makeText(getBaseContext(), "Right Swipe", Toast.LENGTH_SHORT).show();
                     }
@@ -124,8 +124,8 @@ public class MainActivity extends Activity implements SensorEventListener,
 
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
-                sendMessage1();
-                Toast.makeText(getBaseContext(),"Single Tap.", Toast.LENGTH_SHORT).show();
+                sendMessage(MESSAGE1);
+                Toast.makeText(getBaseContext(),"Single Tap", Toast.LENGTH_SHORT).show();
                 Log.d(DEBUG_TAG, "onSingleTapUp: " + e.toString());
                 return true;
             }
@@ -209,7 +209,7 @@ public class MainActivity extends Activity implements SensorEventListener,
             // otherwise, reset the color
             if(gForce > SHAKE_THRESHOLD) {
                 //mView.setBackgroundColor(Color.rgb(0, 100, 100));
-                sendMessage2();
+                sendMessage(MESSAGE2);
             }
             else {
                 //mView.setBackgroundColor(Color.BLACK);
@@ -231,7 +231,7 @@ public class MainActivity extends Activity implements SensorEventListener,
 
             } else if (Math.abs(event.values[1]) > ROTATION_THRESHOLD ){
                 // mView.setBackgroundColor(Color.rgb(0, 100, 100));
-                sendMessage5();
+                sendMessage(MESSAGE5);
 
             }else if (Math.abs(event.values[2]) > ROTATION_THRESHOLD) {
                 //mView.setBackgroundColor(Color.rgb(0, 100, 0));
@@ -279,82 +279,19 @@ public class MainActivity extends Activity implements SensorEventListener,
     /**
      * Sends a message to the connected mobile device, telling it to show a Toast. Reset the image
      */
-    private void sendMessage1() {
+    private void sendMessage(final String text) {
         if (nodeId != null) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     client.blockingConnect(CONNECTION_TIME_OUT_MS, TimeUnit.MILLISECONDS);
-                    Wearable.MessageApi.sendMessage(client, nodeId, MESSAGE1, null);
+                    Wearable.MessageApi.sendMessage(client, nodeId, text, null);
                     client.disconnect();
                 }
             }).start();
         }
     }
 
-    /**
-     * Sends a message to the connected mobile device, telling it to show a Toast.
-     */
-    private void sendMessage2() {
-        if (nodeId != null) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    client.blockingConnect(CONNECTION_TIME_OUT_MS, TimeUnit.MILLISECONDS);
-                    Wearable.MessageApi.sendMessage(client, nodeId, MESSAGE2, null);
-                    client.disconnect();
-                }
-            }).start();
-        }
-    }
-
-    /**
-     * Sends a message to the connected mobile device, telling it to show a Toast.
-     */
-    private void sendMessage3() {
-        if (nodeId != null) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    client.blockingConnect(CONNECTION_TIME_OUT_MS, TimeUnit.MILLISECONDS);
-                    Wearable.MessageApi.sendMessage(client, nodeId, MESSAGE3, null);
-                    client.disconnect();
-                }
-            }).start();
-        }
-    }
-
-    /**
-     * Sends a message to the connected mobile device, telling it to show a Toast.
-     */
-    private void sendMessage4() {
-        if (nodeId != null) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    client.blockingConnect(CONNECTION_TIME_OUT_MS, TimeUnit.MILLISECONDS);
-                    Wearable.MessageApi.sendMessage(client, nodeId, MESSAGE4, null);
-                    client.disconnect();
-                }
-            }).start();
-        }
-    }
-
-    /**
-     * Sends a message to the connected mobile device, telling it to show a Toast.
-     */
-    private void sendMessage5() {
-        if (nodeId != null) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    client.blockingConnect(CONNECTION_TIME_OUT_MS, TimeUnit.MILLISECONDS);
-                    Wearable.MessageApi.sendMessage(client, nodeId, MESSAGE5, null);
-                    client.disconnect();
-                }
-            }).start();
-        }
-    }
 
     @Override
     public boolean dispatchTouchEvent (MotionEvent e) {

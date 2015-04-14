@@ -1,4 +1,4 @@
-package com.thalmic.android.myoglass.wearchat;
+package com.thalmic.android.myoglass;
 
 import android.widget.Toast;
 
@@ -7,10 +7,10 @@ import com.google.android.gms.wearable.WearableListenerService;
 
 public class ListenerService extends WearableListenerService {
 
-    private static final String MESSAGE1 = "SINGLE";
-    private static final String MESSAGE2 = "DOUBLE";
-    private static final String MESSAGE3 = "RTL";
-    private static final String MESSAGE4 = "LONG";
+    private static final String MESSAGE1 = "Hello Watch! You're in Control";
+    private static final String MESSAGE2 = "I'm running late, but I'll be there soon.";
+    private static final String MESSAGE3 = "Sorry, I missed your call.";
+    private static final String MESSAGE4 = "Please call me when you get this message.";
     private static final String MESSAGE5 = "I'm in the airport now, I'll talk to you later.";
 
 
