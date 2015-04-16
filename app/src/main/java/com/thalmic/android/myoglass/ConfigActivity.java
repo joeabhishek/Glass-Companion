@@ -19,6 +19,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -191,7 +192,32 @@ public class ConfigActivity extends Activity implements GlassDevice.GlassConnect
         }
 
         setCurrentActivity(this);
+
+        //Local Broadcast
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                new IntentFilter("gesture_wear"));
     }
+
+    // Our handler for received Intents. This will be called whenever an Intent
+    // with an action named "custom-event-name" is broadcasted.
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // TODO Auto-generated method stub
+            // Get extra data included in the Intent
+            String message = intent.getStringExtra("gesture");
+            Log.d("receiver", "Got message: " + message);
+            if(message.equals("SINGLE")){
+                mGlass.tap();
+            } else if(message.equals("DOWN")) {
+                mGlass.swipeDown();
+            } else if(message.equals("LTR")) {
+                mGlass.swipeRight();
+            } else if(message.equals("RTL")) {
+                mGlass.swipeLeft();
+            }
+        }
+    };
 
 
     @Override
@@ -231,6 +257,7 @@ public class ConfigActivity extends Activity implements GlassDevice.GlassConnect
                     TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
                     String message = textView.getText().toString();
                     sendMessage(message);
+                    mGlass.tap();
                 }
             }
         });
@@ -390,6 +417,7 @@ public class ConfigActivity extends Activity implements GlassDevice.GlassConnect
         unregisterReceiver(mStopReceiver);
         unbindService(mServiceConnection);
         mGlass.unregisterListener(this);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
     }
 
     @Override

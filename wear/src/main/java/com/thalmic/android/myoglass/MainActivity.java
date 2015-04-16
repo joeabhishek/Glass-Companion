@@ -28,20 +28,22 @@ public class MainActivity extends Activity implements SensorEventListener,
 
     private static final long CONNECTION_TIME_OUT_MS = 100;
     private static final String DEBUG_TAG = "Gestures";
-    private static final String MESSAGE1 = "SINGLE";
-    private static final String MESSAGE2 = "DOUBLE";
-    private static final String MESSAGE3 = "RTL";
-    private static final String MESSAGE4 = "LONG";
-    private static final String MESSAGE5 = "I'm in the airport now, I'll talk to you later.";
+    private static final String SINGLE = "SINGLE";
+    private static final String DOUBLE = "DOUBLE";
+    private static final String DOWN = "DOUBLE";
+    private static final String RTL = "RTL";
+    private static final String LTR = "LTR";
+    private static final String LONG_PRESS = "LONG";
+    private static final String SHAKE = "SHAKE";
+    private static final String ROTATION = "ROTATION";
 
 
     private static final float SHAKE_THRESHOLD = 2.1f;
     private static final int SHAKE_WAIT_TIME_MS = 250;
     private static final float ROTATION_THRESHOLD = 3.0f;
     private static final int ROTATION_WAIT_TIME_MS = 100;
-    private static final int SWIPE_MIN_DISTANCE = 120;
-    private static final int SWIPE_MAX_OFF_PATH = 250;
-    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+    private static final int SWIPE_THRESHOLD = 100;
+    private static final int SWIPE_VELOCITY_THRESHOLD = 100;
 
     private GestureDetectorCompat mDetector;
     private SensorManager mSensorManager;
@@ -84,14 +86,14 @@ public class MainActivity extends Activity implements SensorEventListener,
         mDetector = new GestureDetectorCompat(MainActivity.this, new GestureDetector.SimpleOnGestureListener(){
             @Override
             public void onLongPress (MotionEvent e){
-                sendMessage(MESSAGE4);
+                sendMessage(LONG_PRESS);
                 // Detected long press
                 Toast.makeText(getBaseContext(),"Long Press",Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public boolean onDoubleTap(MotionEvent e) {
-                sendMessage(MESSAGE2);
+                sendMessage(DOUBLE);
                 Toast.makeText(getBaseContext(),"Double Tap", Toast.LENGTH_SHORT).show();
                 Log.d(DEBUG_TAG, "onDoubleTap: " + e.toString());
                 return true;
@@ -100,31 +102,44 @@ public class MainActivity extends Activity implements SensorEventListener,
             @Override
             public boolean onFling(MotionEvent e1, MotionEvent e2,
                                    float velocityX, float velocityY) {
+                boolean result = false;
                 try {
-                    if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH) {
-                        return true;
-                    } else if(Math.abs(e2.getY() - e1.getY()) > SWIPE_MAX_OFF_PATH) {
-                        sendMessage(MESSAGE5);
-                        Toast.makeText(getBaseContext(), "Message5 Sent", Toast.LENGTH_SHORT).show();
-                        return true;
+                    float diffY = e2.getY() - e1.getY();
+                    float diffX = e2.getX() - e1.getX();
+                    if (Math.abs(diffX) > Math.abs(diffY)) {
+                        if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                            if (diffX > 0) {
+                                sendMessage(LTR);
+                                Toast.makeText(getBaseContext(), "Left to Right", Toast.LENGTH_SHORT).show();
+
+                            } else {
+                                sendMessage(RTL);
+                                Toast.makeText(getBaseContext(), "Right to Left", Toast.LENGTH_SHORT).show();
+
+                            }
+                        }
+                        result = true;
+
+                    } else if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+                        if (diffY > 0) {
+                            sendMessage(DOWN);
+                            Toast.makeText(getBaseContext(), "Down Swipe", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getBaseContext(), "Top Swipe", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
-                    // right to left swipe
-                    if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                        sendMessage(MESSAGE3);
-                        Toast.makeText(getBaseContext(), "Right Swipe", Toast.LENGTH_SHORT).show();
-                    }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                        //Toast.makeText(getBaseContext(), "Right Swipe", Toast.LENGTH_SHORT).show();
-                    }
-                } catch (Exception e) {
-                    // nothing
+                    result = true;
+
+                } catch (Exception exception) {
+                    exception.printStackTrace();
                 }
-                return false;
+                return result;
             }
 
             @Override
             public boolean onSingleTapConfirmed(MotionEvent e) {
-                sendMessage(MESSAGE1);
+                sendMessage(SINGLE);
                 Toast.makeText(getBaseContext(),"Single Tap", Toast.LENGTH_SHORT).show();
                 Log.d(DEBUG_TAG, "onSingleTapUp: " + e.toString());
                 return true;
@@ -209,7 +224,7 @@ public class MainActivity extends Activity implements SensorEventListener,
             // otherwise, reset the color
             if(gForce > SHAKE_THRESHOLD) {
                 //mView.setBackgroundColor(Color.rgb(0, 100, 100));
-                sendMessage(MESSAGE2);
+                sendMessage(SHAKE);
             }
             else {
                 //mView.setBackgroundColor(Color.BLACK);
@@ -231,7 +246,7 @@ public class MainActivity extends Activity implements SensorEventListener,
 
             } else if (Math.abs(event.values[1]) > ROTATION_THRESHOLD ){
                 // mView.setBackgroundColor(Color.rgb(0, 100, 100));
-                sendMessage(MESSAGE5);
+                sendMessage(ROTATION);
 
             }else if (Math.abs(event.values[2]) > ROTATION_THRESHOLD) {
                 //mView.setBackgroundColor(Color.rgb(0, 100, 0));
