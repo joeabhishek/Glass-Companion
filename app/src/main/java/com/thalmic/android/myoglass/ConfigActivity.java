@@ -494,6 +494,7 @@ public class ConfigActivity extends Activity implements GlassDevice.GlassConnect
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     mConversationArrayAdapter.add("Speech : " + result.get(0));
+                    sendMessage(result.get(0));
                 }
                 break;
             }
