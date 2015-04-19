@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -18,6 +19,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
@@ -30,6 +32,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -49,6 +52,7 @@ import com.thalmic.myo.scanner.ScanActivity;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Set;
 
@@ -74,7 +78,6 @@ public class ConfigActivity extends Activity implements GlassDevice.GlassConnect
     private GlassDevice mGlass;
     private boolean mScreencastEnabled = false;
     private TextToSpeech tts;
-
 
     //Bluetooth Chat
 
@@ -125,6 +128,10 @@ public class ConfigActivity extends Activity implements GlassDevice.GlassConnect
 
     //BLUETOOTH Chat End
 
+    //Speech to Text variables
+    private ImageButton btnSpeak;
+    private final int REQ_CODE_SPEECH_INPUT = 100;
+
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -170,6 +177,20 @@ public class ConfigActivity extends Activity implements GlassDevice.GlassConnect
         mSendButton = (Button) findViewById(R.id.button_send);
         // End
 
+        //Speech To Text
+        btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
+
+        btnSpeak.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                promptSpeechInput();
+            }
+        });
+
+
+        //End of Speech to text section
+
         updateScreencastState();
 
         mPrefs = new AppPrefs(this);
@@ -197,6 +218,26 @@ public class ConfigActivity extends Activity implements GlassDevice.GlassConnect
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
                 new IntentFilter("gesture_wear"));
     }
+
+    /**
+     * Showing google speech input dialog
+     * */
+    private void promptSpeechInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_prompt));
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.speech_not_supported),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     // Our handler for received Intents. This will be called whenever an Intent
     // with an action named "custom-event-name" is broadcasted.
@@ -404,8 +445,11 @@ public class ConfigActivity extends Activity implements GlassDevice.GlassConnect
     private void speakOut(String text) {
 
         //String text = txtText.getText().toString();
+        if(!text.equals("STOP")){
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+        }
 
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+
     }
 
     //BLuetooth Chat End
@@ -442,6 +486,18 @@ public class ConfigActivity extends Activity implements GlassDevice.GlassConnect
         if (requestCode == REQUEST_ENABLE_BT && resultCode == Activity.RESULT_CANCELED) {
             finish();
             return;
+        }
+        switch (requestCode) {
+            case REQ_CODE_SPEECH_INPUT: {
+                if (resultCode == RESULT_OK && null != data) {
+
+                    ArrayList<String> result = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    mConversationArrayAdapter.add("Speech : " + result.get(0));
+                }
+                break;
+            }
+
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

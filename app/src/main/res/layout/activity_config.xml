@@ -37,11 +37,19 @@
             android:layout_gravity="bottom"
             android:layout_weight="1" />
 
+            <ImageButton
+                android:id="@+id/btnSpeak"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:src="@drawable/ico_mic" />
+
         <Button
             android:id="@+id/button_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Send" />
+            android:text="Send"
+            android:layout_gravity="center_vertical" />
     </LinearLayout>
 
         <ImageView
