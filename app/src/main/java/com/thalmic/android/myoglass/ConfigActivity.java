@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -59,7 +60,9 @@ import java.util.Set;
 public class ConfigActivity extends Activity implements GlassDevice.GlassConnectionListener,
         TextToSpeech.OnInitListener {
     private static final String TAG = "ConfigActivity";
-
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    SharedPreferences sharedpreferences;
+    public static final String SpeakBoolean = "speakBoolean";
     private static final int REQUEST_ENABLE_BT = 1;
 
     private MyoRemoteService mService;
@@ -194,6 +197,13 @@ public class ConfigActivity extends Activity implements GlassDevice.GlassConnect
         updateScreencastState();
 
         mPrefs = new AppPrefs(this);
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+
+        if (sharedpreferences.contains(SpeakBoolean))
+        {
+            speak = sharedpreferences.getBoolean(SpeakBoolean, false);
+
+        }
 
         Intent intent = new Intent(this, MyoRemoteService.class);
         bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
@@ -389,7 +399,7 @@ public class ConfigActivity extends Activity implements GlassDevice.GlassConnect
                     byte[] writeBuf = (byte[]) msg.obj;
                     // construct a string from the buffer
                     String writeMessage = new String(writeBuf);
-                    mConversationArrayAdapter.add("Me:  " + writeMessage);
+                    //mConversationArrayAdapter.add("Me:  " + writeMessage);
                     break;
                 case Constants.MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
@@ -516,12 +526,16 @@ public class ConfigActivity extends Activity implements GlassDevice.GlassConnect
                 killMyGlass();
                 return true;
             case R.id.speak_text:
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+
                 item.setChecked(!item.isChecked());
                 if(item.isChecked()){
                     speak = true;
                 } else {
                     speak = false;
                 }
+                editor.putBoolean(SpeakBoolean, speak);
+                editor.commit();
                 return true;
         }
 
