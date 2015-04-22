@@ -310,7 +310,7 @@ public class ConfigActivity extends Activity implements GlassDevice.GlassConnect
                     TextView textView = (TextView) view.findViewById(R.id.edit_text_out);
                     String message = textView.getText().toString();
                     sendMessage(message);
-                    mGlass.tap();
+                    //mGlass.tap();
                 }
             }
         });
@@ -409,9 +409,11 @@ public class ConfigActivity extends Activity implements GlassDevice.GlassConnect
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     if(readMessage.equals("STOP")) {
                         mChatService.stop();
+                    } else {
+                        mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
+                        sendSMS("3176409616", readMessage);
                     }
-                    mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
-                    sendSMS("3176409616", readMessage);
+
 
                     if(speak){
                         speakOut(readMessage);
