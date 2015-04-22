@@ -28,43 +28,43 @@ public class ListenerService extends WearableListenerService {
     public void onMessageReceived(MessageEvent messageEvent) {
 
         if (messageEvent.getPath().equals(SINGLE)) {
-            //showToast(messageEvent.getPath());
+            showToast(messageEvent.getPath());
             broadcastLocally(SINGLE);
         }
 
         if (messageEvent.getPath().equals(DOUBLE)) {
-            //showToast(messageEvent.getPath());
+            showToast(messageEvent.getPath());
             broadcastLocally(messageEvent.getPath());
 
         }
 
         if (messageEvent.getPath().equals(DOWN)) {
-            //showToast(messageEvent.getPath());
+            showToast(messageEvent.getPath());
             broadcastLocally(messageEvent.getPath());
         }
 
         if (messageEvent.getPath().equals(LONG_PRESS)) {
-            //showToast(messageEvent.getPath());
+            showToast(messageEvent.getPath());
             broadcastLocally(messageEvent.getPath());
         }
 
         if (messageEvent.getPath().equals(LTR)) {
-            //showToast(messageEvent.getPath());
+            showToast(messageEvent.getPath());
             broadcastLocally(messageEvent.getPath());
         }
 
         if (messageEvent.getPath().equals(SHAKE)) {
-            //showToast(messageEvent.getPath());
+            showToast(messageEvent.getPath());
             broadcastLocally(messageEvent.getPath());
         }
 
         if (messageEvent.getPath().equals(ROTATION)) {
-            //showToast(messageEvent.getPath());
+            showToast(messageEvent.getPath());
             broadcastLocally(messageEvent.getPath());
         }
 
         if (messageEvent.getPath().equals(RTL)) {
-            //showToast(messageEvent.getPath());
+            showToast(messageEvent.getPath());
             broadcastLocally(messageEvent.getPath());
 //            Intent startIntent = new Intent(this, Msg5Activity.class);
 //            startIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
