@@ -42,5 +42,3 @@ Also thanks to examples/work from [@thorikawa](https://github.com/thorikawa) fro
 ## License
 
 The Myo Glass Companion project is licensed using the modified BSD license. For more details, please see LICENSE.txt.
-
-# Myo-Glass-Messaging-Service
